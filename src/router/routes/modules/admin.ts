@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import AdminLayout from '@/layouts/admin/index.vue'
 import { SYSTEM_ROUTES } from '../app/system'
 import { HTML_ROUTES } from '../app/html'
+import { CESIUM_ROUTES } from '../app/cesium'
 
 const ADMIN_ROUTES: RouteRecordRaw[] = [
   {
@@ -17,6 +18,7 @@ const ADMIN_ROUTES: RouteRecordRaw[] = [
         meta: { title: '控制台', icon: 'dashboard-3-fill', permission: 1, fixed: true }
       },
       ...HTML_ROUTES,
+      ...CESIUM_ROUTES,
       ...SYSTEM_ROUTES,
     ]
   }
