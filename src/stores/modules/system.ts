@@ -20,6 +20,7 @@ export const useSystemStore = defineStore('systemStore', {
         this.$patch(data.json)
       } else {
         this.site_name = import.meta.env.APP_TITLE
+        this.logo = '/static/images/logo/logo.svg'
         this.not_install = true
       }
     }

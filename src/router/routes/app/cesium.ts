@@ -11,8 +11,8 @@ export const CESIUM_ROUTES: RouteRecordRaw[] = [
         path: 'entity',
         name: 'admin-cesium-entity',
         component: () => import('@/views/admin/cesium/entity/index.vue'),
-        meta: { title: '绘制实体', icon: 'ancient-pavilion-line' }
-      },
+        meta: { title: '绘制实体', icon: 'ancient-pavilion-line', noKeepAlive: true }
+      }
     ]
   }
 ]

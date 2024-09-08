@@ -1,8 +1,10 @@
 <template>
   <a-layout class="layout-admin-container">
-    <a-layout-sider :collapsed="appStore.isMobile"><AdminSide breakpoint="lg" /></a-layout-sider>
+    <a-layout-sider class="z-3" :collapsed="appStore.isMobile"
+      ><AdminSide breakpoint="lg"
+    /></a-layout-sider>
     <a-layout class="h-100 flex-column">
-      <a-layout-header><AdminHeader /></a-layout-header>
+      <a-layout-header class="z-3"><AdminHeader /></a-layout-header>
       <a-layout-content class="flex-column p-15 flex-1 h-0">
         <router-view v-slot="{ Component, route }">
           <transition name="fade" mode="out-in">
