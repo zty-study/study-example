@@ -84,7 +84,7 @@ $themes: (
       color: getVal(scrollColor);
     }
     .card-bg {
-      color: getVal(cardBg);
+      background-color: getVal(cardBg);
     }
   }
 
