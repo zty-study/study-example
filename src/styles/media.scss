@@ -1,0 +1,47 @@
+$breakpoints: (
+    phone: (
+        0px,
+        480px
+    ),
+    pad: (
+        481px,
+        768px
+    ),
+    xs: (
+        0,
+        992px
+    ),
+    laptop: (
+        769px,
+        1024px
+    ),
+    desktop: (
+        1025px,
+        1200px
+    ),
+
+    sm: 769px,
+    md: 1025px,
+    lg: 1201px
+);
+
+@mixin respond-to($breakname) {
+    $bp: map-get($breakpoints, $breakname);
+    @if type-of($bp) == "list" {
+        $min: nth($bp, 1);
+        $max: nth($bp, 2);
+        @media (min-width: $min) and (max-width: $max) {
+            @content;
+        }
+    } @else {
+        @media (min-width: $bp) {
+            @content;
+        }
+    }
+}
+
+.hide-xs {
+    @include respond-to("xs") {
+        display: none;
+    }
+}

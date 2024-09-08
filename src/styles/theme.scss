@@ -1,0 +1,101 @@
+// 全局主题变量配置 误删 ！！！
+$white-color: #fff;
+$black-color: #23252a;
+
+// 主题色
+$theme-color: #195ef9;
+
+$base-primary: $theme-color;
+$base-success: #52c41a;
+$base-warning: #faad14;
+$base-danger: #e64340;
+$base-error: #db2828;
+$base-info: #909399;
+
+//圆角
+$base-border-radius: 5px;
+
+// 日夜间主题模式
+$curTheme: light;
+
+$themes: (
+  light: (
+    bgColor: #f2f3f5,
+    cardBg: #ffffff,
+    textColor: #4e5358,
+    pureColor: $white-color,
+    iniColor: $white-color,
+    borderColor: #e5e6eb,
+    mutedColor: #888,
+    titleColor: #252525,
+    keyColor: #333333,
+    scrollColor: #dddee0
+  ),
+  dark: (
+    bgColor: #18181c,
+    cardBg: #232324,
+    textColor: #c0c3c6,
+    pureColor: $black-color,
+    iniColor: #000,
+    borderColor: #333335,
+    mutedColor: #8c8c8c,
+    titleColor: #f2f6fc,
+    keyColor: #f8fafc,
+    scrollColor: #4b4e53
+  )
+);
+
+@function getVal($key) {
+  $themeMap: map-get($themes, $curTheme);
+  @return map-get($themeMap, $key);
+}
+
+@mixin useTheme() {
+  @each $key, $value in $themes {
+    $curTheme: $key !global;
+    // html[data-theme="#{$key}"] & {
+    //   @content;
+    // }
+    html.#{$key} & {
+      @content;
+    }
+  }
+}
+
+* {
+  @include useTheme {
+    --text-color: #{getVal(textColor)};
+    --color-bg-2: #{getVal(pureColor)};
+    --color-spin-layer-bg: #{rgba(getVal(iniColor), 0.4)};
+
+    .title-color {
+      color: getVal(titleColor);
+    }
+    .text-color {
+      color: getVal(textColor);
+    }
+    .muted-color {
+      color: getVal(mutedColor);
+    }
+    .border-color {
+      color: getVal(borderColor);
+    }
+    .scroll-color {
+      color: getVal(scrollColor);
+    }
+    .card-bg {
+      color: getVal(cardBg);
+    }
+  }
+
+  .theme-hover {
+    transition: all 0.3s;
+    &:hover {
+      color: var(--theme-color) !important;
+    }
+  }
+}
+
+:root {
+  --theme-color: #{$theme-color};
+}
