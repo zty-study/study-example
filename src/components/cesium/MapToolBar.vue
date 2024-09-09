@@ -8,7 +8,7 @@
     >
       <div
         class="tool-item pointer"
-        :class="{ active: tool.value === currentDraw }"
+        :class="{ active: tool.value === drawType }"
         @click="activated(tool.value, tool.config)"
       >
         <IconFont :name="tool.icon" :size="tool.size || 16" color="#fff" />
@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-const { currentDraw, activated, handleDraw, clear } = drawMap()
+const { drawType, activated, handleDraw, clear } = drawMap()
 
 const toolList = [
   {
@@ -36,7 +36,7 @@ const toolList = [
     size: 10,
     config: { color: '#2997f7' }
   },
-  { name: '画线', value: 'polygon', icon: 'pencil-line' },
+  { name: '画线', value: 'line', icon: 'pencil-line' },
   { name: '广告牌', value: 'billboard', icon: 'map-pin-fill' },
   { name: '测距', value: 'distant', icon: 'ruler-fill' }
 ]

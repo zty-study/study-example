@@ -1,39 +1,38 @@
 import * as Cesium from 'cesium'
 
-const currentDraw = ref()
-const entityConfig = ref<any>({})
+const drawType = ref() // 绘制类型
 
-let handler: Cesium.ScreenSpaceEventHandler
+let _entityConfig: any = {} // 绘制配置
+let _currentEntity: Cesium.Entity | undefined // 当前绘制实体
+let _mousePos: Cesium.Cartesian3 | undefined // 移动点
+let _tempPositions: Cesium.Cartesian3[] = [] // 存储点集合
+let _dataSource: Cesium.CustomDataSource | undefined // 资源集合
+let _drawHandler: Cesium.ScreenSpaceEventHandler // 事件
 
 export const drawMap = () => {
-  handler = new Cesium.ScreenSpaceEventHandler(window.viewer.scene.canvas)
-
   // Cesium参数转换
   const _drawConfig = computed(() => {
     return {
-      ...(entityConfig.value || {}),
-      color: entityConfig.value?.color
-        ? Cesium.Color.fromCssColorString(entityConfig.value.color)
+      ...(_entityConfig || {}),
+      color: _entityConfig?.color
+        ? Cesium.Color.fromCssColorString(_entityConfig.color)
         : Cesium.Color.WHITE,
-      outlineColor: entityConfig.value?.outlineColor
-        ? Cesium.Color.fromCssColorString(entityConfig.value.outlineColor)
+      outlineColor: _entityConfig?.outlineColor
+        ? Cesium.Color.fromCssColorString(_entityConfig.outlineColor)
         : Cesium.Color.WHITE
     }
   })
 
   // 激活绘制目标
   const activated = (target: string, config?: any) => {
-    currentDraw.value = currentDraw.value === target ? undefined : target
-    entityConfig.value = currentDraw.value ? config || {} : undefined
+    drawType.value = drawType.value === target ? undefined : target
+    _entityConfig = drawType.value ? config || {} : undefined
   }
 
   // 画点
-  const _drawPoint = (viewer: Cesium.Viewer, position: Cesium.Cartesian2) => {
-    const ray = window.viewer.camera.getPickRay(position)
-    const pos = window.viewer.scene.globe.pick(ray!, window.viewer.scene)
-
-    viewer.entities.add({
-      id: Math.random().toString(36).substring(2),
+  const _drawPoint = (pos: Cesium.Cartesian3) => {
+    _dataSource?.entities.add({
+      id: 'point-' + Math.random().toString(36).substring(2),
       position: pos,
       point: Object.assign(
         {
@@ -41,7 +40,26 @@ export const drawMap = () => {
           pixelSize: 10,
           outlineWidth: 2,
           outlineColor: Cesium.Color.WHITE
-          // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        },
+        _drawConfig.value || {}
+      )
+    })
+  }
+
+  // 画线
+  const _drawLine = (position?: Cesium.Cartesian3[]) => {
+    // _currentEntity && _tempPositions?.length && _dataSource?.entities.remove(_currentEntity)
+    _dataSource?.entities.add({
+      id: 'line-' + Math.random().toString(36).substring(2),
+      polyline: Object.assign(
+        {
+          positions: new Cesium.CallbackProperty(() => {
+            const c = Array.from(position || _tempPositions)
+            _mousePos && !position && c.push(_mousePos)
+            return c
+          }, false),
+          width: 2,
+          material: Cesium.Color.RED
         },
         _drawConfig.value || {}
       )
@@ -50,23 +68,62 @@ export const drawMap = () => {
 
   const handleDraw = (viewer: Cesium.Viewer) => {
     if (!viewer) return
-    handler.setInputAction(({ position }: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-      switch (currentDraw.value) {
+    _drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+    _dataSource = new Cesium.CustomDataSource('_dataSource')
+    viewer.dataSources.add(_dataSource)
+
+    // 左键单击事件处理
+    _drawHandler.setInputAction(({ position }: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+      let pos: Cesium.Cartesian3 | undefined
+      const ray = viewer.camera.getPickRay(position)
+      ray && (pos = viewer.scene.globe.pick(ray, viewer.scene))
+      switch (drawType.value) {
         case 'point':
-          _drawPoint(viewer, position)
+          pos && _drawPoint(pos)
           break
+        case 'line':
+          pos && _tempPositions.push(pos)
+          _tempPositions?.length > 0 && _drawLine()
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+
+    // 右键键单击事件处理
+    _drawHandler.setInputAction(({ position }: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+      switch (drawType.value) {
+        case 'line':
+          _drawLine(_tempPositions)
+          _tempPositions = []
+          break
+      }
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+
+    // 注册鼠标移动事件
+    _drawHandler.setInputAction(({ endPosition }: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
+      if (_tempPositions?.length > 0) {
+        const p = viewer.scene.pickPosition(endPosition)
+        if (!p) return
+        _mousePos = p
+      } else {
+        _mousePos = undefined
+      }
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
   }
 
-  // 清除所有实体
+  // 清除
   const clear = () => {
-    window.viewer.entities.removeAll()
+    _dataSource?.entities.removeAll()
+
+    _mousePos = undefined
+    _tempPositions = []
   }
 
   onUnmounted(() => {
-    handler?.destroy()
+    clear()
+
+    _dataSource && window.viewer?.dataSources.remove(_dataSource)
+    _dataSource = undefined
+    _drawHandler?.destroy()
   })
 
-  return { currentDraw, activated, handleDraw, clear }
+  return { drawType, activated, handleDraw, clear }
 }
