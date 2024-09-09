@@ -73,14 +73,7 @@ export const useMap = () => {
               // heightReference: Cesium.HeightReference.NONE
             },
             config || {}
-          ),
-          description: `
-                <p>这是entity的属性信息，entity的description里面可以写一段html</p>                
-                <img width="450" height="200" src="./test.png"></img>
-                <video width="450" height="350" controls="controls" type="video/mp4" preload="auto">
-                    <source src="./test2.mp4" autostart="true">
-                </video>
-                <p>苹果园dog</p>`
+          )
         })
       },
       Cesium.ScreenSpaceEventType.LEFT_CLICK
