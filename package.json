@@ -16,10 +16,13 @@
   },
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
+    "@types/heatmap.js": "^2.0.41",
     "@vueuse/core": "^10.11.0",
     "axios": "^1.7.2",
     "clipboard": "^2.0.11",
     "echarts": "^5.5.1",
+    "heatmap.js": "^2.0.5",
+    "js-web-screen-shot": "^1.9.9-rc.20",
     "jwt-decode": "^4.0.0",
     "lottie-web": "^5.12.2",
     "mitt": "^3.0.1",
@@ -29,7 +32,8 @@
     "vue": "^3.4.29",
     "vue-img-cutter": "^3.0.5",
     "vue-json-pretty": "^2.4.0",
-    "vue-router": "^4.3.3"
+    "vue-router": "^4.3.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@arco-design/web-vue": "^2.56.0",

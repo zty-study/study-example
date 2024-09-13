@@ -18,12 +18,12 @@ onMounted(async () => {
   const viewer = createMap('map-entity')
   viewer.camera.setView({
     // destination: Cesium.Cartesian3.fromDegrees(105.30028908169245, 26.96206735504125, 4000),
-    destination: new Cesium.Cartesian3(-1506336.0270883515, 5487916.296421073, 2876393.963906946),
-    orientation: {
-      heading: 4.417425186487677,
-      pitch: -0.3107427037808055,
-      roll: 6.283161438815717
-    }
+    destination: new Cesium.Cartesian3(-1506336.0270883515, 5487916.296421073, 2876393.963906946)
+    // orientation: {
+    //   heading: 4.417425186487677,
+    //   pitch: -0.3107427037808055,
+    //   roll: 6.283161438815717
+    // }
   })
 
   //   viewer.scene.primitives.add(await Cesium.createOsmBuildingsAsync())

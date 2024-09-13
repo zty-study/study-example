@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-const { drawType, activated, handleDraw, clear } = drawMap()
+const { drawType, activated, handleDraw, clear } = drawMap(window.viewer)
 
 const toolList = [
   {
@@ -38,11 +38,12 @@ const toolList = [
   },
   { name: '画线', value: 'line', icon: 'pencil-line' },
   { name: '广告牌', value: 'billboard', icon: 'map-pin-fill' },
-  { name: '测距', value: 'distant', icon: 'ruler-fill' }
+  { name: '测距', value: 'distant', icon: 'ruler-fill' },
+  { name: '扇形', value: 'sector', icon: 'gradienter-line' }
 ]
 
 onMounted(() => {
-  handleDraw(window.viewer)
+  handleDraw()
 })
 </script>
 

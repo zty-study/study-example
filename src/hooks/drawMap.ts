@@ -1,15 +1,18 @@
 import * as Cesium from 'cesium'
 
-const drawType = ref() // 绘制类型
+export const drawMap = (viewer: Cesium.Viewer) => {
+  const drawType = ref() // 绘制类型
 
-let _entityConfig: any = {} // 绘制配置
-let _currentEntity: Cesium.Entity | undefined // 当前绘制实体
-let _mousePos: Cesium.Cartesian3 | undefined // 移动点
-let _tempPositions: Cesium.Cartesian3[] = [] // 存储点集合
-let _dataSource: Cesium.CustomDataSource | undefined // 资源集合
-let _drawHandler: Cesium.ScreenSpaceEventHandler // 事件
+  let _entityConfig: any = {} // 绘制配置
+  let _mousePos: Cesium.Cartesian3 | undefined // 移动点
+  let _tempPositions: Cesium.Cartesian3[] = [] // 存储点集合
+  const _dataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource('_dataSource') // 资源集合
+  const _drawHandler: Cesium.ScreenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(
+    viewer.scene.canvas
+  ) // 事件
 
-export const drawMap = () => {
+  viewer.dataSources.add(_dataSource)
+
   // Cesium参数转换
   const _drawConfig = computed(() => {
     return {
@@ -66,12 +69,28 @@ export const drawMap = () => {
     })
   }
 
-  const handleDraw = (viewer: Cesium.Viewer) => {
-    if (!viewer) return
-    _drawHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
-    _dataSource = new Cesium.CustomDataSource('_dataSource')
-    viewer.dataSources.add(_dataSource)
+  // 画扇形
+  const drawSector = (
+    point: Cesium.Cartesian3,
+    radius: number,
+    startAngle: number,
+    endAngle: number
+  ) => {
+    _dataSource?.entities.add({
+      name: 'Wedge',
+      position: point,
+      ellipsoid: {
+        radii: new Cesium.Cartesian3(radius, radius, 1.0),
+        minimumClock: Cesium.Math.toRadians((endAngle < startAngle ? 90 : 450) - endAngle),
+        maximumClock: Cesium.Math.toRadians(450 - startAngle),
+        material: Cesium.Color.DARKCYAN.withAlpha(0.3),
+        outlineColor: Cesium.Color.RED,
+        outlineWidth: 20
+      }
+    })
+  }
 
+  const handleDraw = () => {
     // 左键单击事件处理
     _drawHandler.setInputAction(({ position }: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
       let pos: Cesium.Cartesian3 | undefined
@@ -84,6 +103,10 @@ export const drawMap = () => {
         case 'line':
           pos && _tempPositions.push(pos)
           _tempPositions?.length > 0 && _drawLine()
+          break
+        case 'sector':
+          pos && drawSector(pos, 400, 20, 10)
+          break
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
@@ -117,11 +140,10 @@ export const drawMap = () => {
     _tempPositions = []
   }
 
-  onUnmounted(() => {
+  onBeforeUnmount(() => {
     clear()
 
     _dataSource && window.viewer?.dataSources.remove(_dataSource)
-    _dataSource = undefined
     _drawHandler?.destroy()
   })
 
