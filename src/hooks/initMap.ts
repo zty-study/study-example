@@ -27,8 +27,17 @@ export const initMap = () => {
       fullscreenButton: false,
       selectionIndicator: false, // 取消绿色选框
       vrButton: false,
-      sceneMode: Cesium.SceneMode.SCENE3D
+      sceneMode: Cesium.SceneMode.SCENE2D
     })
+
+    // 如果为真，则允许用户旋转相机。如果为假，相机将锁定到当前标题。此标志仅适用于2D和3D。
+    // scene.screenSpaceCameraController.enableRotate = false;
+    // // 如果为true，则允许用户平移地图。如果为假，相机将保持锁定在当前位置。此标志仅适用于2D和Columbus视图模式。
+    // scene.screenSpaceCameraController.enableTranslate = false;
+    // // 如果为真，允许用户放大和缩小。如果为假，相机将锁定到距离椭圆体的当前距离
+    // scene.screenSpaceCameraController.enableZoom = false;
+    // // 如果为真，则允许用户倾斜相机。如果为假，相机将锁定到当前标题。这个标志只适用于3D和哥伦布视图。
+    // viewer.scene.screenSpaceCameraController.enableTilt = false
 
     // 抗锯齿
     viewer.scene.postProcessStages.fxaa.enabled = false
@@ -55,13 +64,13 @@ export const initMap = () => {
     // ]
 
     // 叠加国界服务天地图
-    const iboMap = new Cesium.UrlTemplateImageryProvider({
-      url: tdtUrl + 'DataServer?T=ibo_w&x={x}&y={y}&l={z}&tk=' + token,
-      subdomains: subdomains,
-      tilingScheme: new Cesium.WebMercatorTilingScheme(),
-      maximumLevel: 10
-    })
-    viewer.imageryLayers.addImageryProvider(iboMap)
+    // const iboMap = new Cesium.UrlTemplateImageryProvider({
+    //   url: tdtUrl + 'DataServer?T=ibo_w&x={x}&y={y}&l={z}&tk=' + token,
+    //   subdomains: subdomains,
+    //   tilingScheme: new Cesium.WebMercatorTilingScheme(),
+    //   maximumLevel: 10
+    // })
+    // viewer.imageryLayers.addImageryProvider(iboMap)
 
     // 矢量底图
     // viewer.imageryLayers.addImageryProvider(
