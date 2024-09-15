@@ -40,7 +40,6 @@
     "@arco-plugins/vite-vue": "^1.4.5",
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
-    "@types/cesium": "^1.70.0",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^20.14.5",
     "@types/nprogress": "^0.2.3",

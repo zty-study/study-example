@@ -7,6 +7,12 @@ declare global {
   }
 }
 
+const token = '1b7e6d0d69b7c4ac48e13111aa6dbf81'
+// 服务域名
+const tdtUrl = 'https://t{s}.tianditu.gov.cn/'
+// 服务负载子域
+const subdomains = ['0', '1', '2', '3', '4', '5', '6', '7']
+
 export const initMap = () => {
   const createMap = (id: string) => {
     const viewer = new Cesium.Viewer(id, {
@@ -48,6 +54,67 @@ export const initMap = () => {
     //   }
     // ]
 
+    // 叠加国界服务天地图
+    const iboMap = new Cesium.UrlTemplateImageryProvider({
+      url: tdtUrl + 'DataServer?T=ibo_w&x={x}&y={y}&l={z}&tk=' + token,
+      subdomains: subdomains,
+      tilingScheme: new Cesium.WebMercatorTilingScheme(),
+      maximumLevel: 10
+    })
+    viewer.imageryLayers.addImageryProvider(iboMap)
+
+    // 矢量底图
+    // viewer.imageryLayers.addImageryProvider(
+    //   new Cesium.WebMapTileServiceImageryProvider({
+    //     url:
+    //     tdtUrl + 'vec_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=vec&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=' +
+    //       token,
+    //     layer: 'tdtVecBasicLayer',
+    //     style: 'default',
+    //     format: 'image/jpeg',
+    //     tileMatrixSetID: 'GoogleMapsCompatible'
+    //   })
+    // )
+
+    // 影像底图
+    // viewer.imageryLayers.addImageryProvider(
+    //   new Cesium.WebMapTileServiceImageryProvider({
+    //     url:
+    //       'http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=vec&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=' +
+    //       token,
+    //     layer: 'tdtVecBasicLayer',
+    //     style: 'default',
+    //     format: 'image/jpeg',
+    //     tileMatrixSetID: 'GoogleMapsCompatible'
+    //   })
+    // )
+
+    // 矢量注记
+    // viewer.imageryLayers.addImageryProvider(
+    //   new Cesium.WebMapTileServiceImageryProvider({
+    //     url:
+    //       'http://t0.tianditu.com/cva_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cva&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=' +
+    //       token,
+    //     layer: 'tdtAnnoLayer',
+    //     style: 'default',
+    //     format: 'image/jpeg',
+    //     tileMatrixSetID: 'GoogleMapsCompatible'
+    //   })
+    // )
+
+    // 影像注记
+    // viewer.imageryLayers.addImageryProvider(
+    //   new Cesium.WebMapTileServiceImageryProvider({
+    //     url:
+    //       'http://t0.tianditu.com/cia_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=cia&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default.jpg&tk=' +
+    //       token,
+    //     layer: 'tdtAnnoLayer',
+    //     style: 'default',
+    //     format: 'image/jpeg',
+    //     tileMatrixSetID: 'GoogleMapsCompatible'
+    //   })
+    // )
+
     viewer.resolutionScale = window.devicePixelRatio
 
     // 取消默认的双击事件
@@ -66,8 +133,8 @@ export const initMap = () => {
     // viewer.scene.globe.depthTestAgainstTerrain = true
 
     // 设置地图缩放高度范围
-    viewer.scene.screenSpaceCameraController.maximumZoomDistance = 10000000
-    viewer.scene.screenSpaceCameraController.minimumZoomDistance = 200
+    // viewer.scene.screenSpaceCameraController.maximumZoomDistance = 10000000
+    // viewer.scene.screenSpaceCameraController.minimumZoomDistance = 200
 
     window.viewer = viewer
     return viewer

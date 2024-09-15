@@ -15,12 +15,13 @@ const { addEvent } = useMap()
 const ready = ref(false)
 
 onMounted(async () => {
-  const viewer = createMap('map-entity')
+  const viewer = await createMap('map-entity')
   viewer.camera.setView({
-    // destination: Cesium.Cartesian3.fromDegrees(105.30028908169245, 26.96206735504125, 4000),
-    destination: new Cesium.Cartesian3(-1506336.0270883515, 5487916.296421073, 2876393.963906946)
+    // destination: Cesium.Cartesian3.fromDegrees(12596216.036141574, 2495141.6263877223, 12756274)
+    destination: new Cesium.Cartesian3(-3704367.021241598, 9235983.392778018, 5437510.9616651)
+    // destination: new Cesium.Cartesian3(-1506336.0270883515, 5487916.296421073, 2876393.963906946),
     // orientation: {
-    //   heading: 4.417425186487677,
+    // heading: 4.417425186487677,
     //   pitch: -0.3107427037808055,
     //   roll: 6.283161438815717
     // }
