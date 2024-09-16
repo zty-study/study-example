@@ -6,7 +6,7 @@ let _handler: Cesium.ScreenSpaceEventHandler | undefined
 
 export const useMap = (viewer: Cesium.Viewer) => {
   if (!_handler) {
-    _handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas) // 事件
+    _handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas) // 事件处理对象
   }
 
   const cartesian = ref<Cesium.Cartesian3>() // 笛卡尔坐标
