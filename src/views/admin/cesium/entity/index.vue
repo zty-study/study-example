@@ -3,6 +3,7 @@
     <div id="map-entity" class="wh-100"></div>
     <div v-if="ready" class="map-tool-wrap wh-100 relative z-3">
       <MapToolBar class="map-tool-bar" />
+      <!-- <MapBaseInfo /> -->
     </div>
   </div>
 </template>
@@ -11,7 +12,6 @@
 import * as Cesium from 'cesium'
 
 const { createMap } = initMap()
-const { addEvent } = useMap()
 const ready = ref(false)
 
 onMounted(async () => {
@@ -29,11 +29,10 @@ onMounted(async () => {
 
   //   viewer.scene.primitives.add(await Cesium.createOsmBuildingsAsync())
 
-  addEvent(viewer)
   ready.value = true
 })
 
-onBeforeMount(() => {
+onBeforeUnmount(() => {
   ready.value = false
 })
 </script>

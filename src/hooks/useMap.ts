@@ -1,89 +1,79 @@
 import * as Cesium from 'cesium'
+import { screenToGeographic } from '@/utils/cesium/tools'
+import Point from '@/utils/cesium/entity/point'
 
-const point = ref<{ lon: number; lat: number; alt: number }>({ lon: 0, lat: 0, alt: 0 })
-const camera = ref<{ heading: number; pitch: number; roll: number }>({
-  heading: 0,
-  pitch: -90,
-  roll: 0
-})
+let _handler: Cesium.ScreenSpaceEventHandler | undefined
 
-let globalHandler: Cesium.ScreenSpaceEventHandler
-let drawPointHandler: Cesium.ScreenSpaceEventHandler
-
-export const useMap = () => {
-  // 注入默认监听事件
-  const addEvent = (viewer: Cesium.Viewer) => {
-    globalHandler?.destroy()
-    globalHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
-
-    // 注册相机变化事件
-    viewer.camera.changed.addEventListener(() => {
-      camera.value = {
-        heading: Cesium.Math.toDegrees(viewer.camera.heading),
-        pitch: Cesium.Math.toDegrees(viewer.camera.pitch),
-        roll: Cesium.Math.toDegrees(viewer.camera.roll)
-      }
-    })
-
-    // 注册鼠标移动事件
-    globalHandler.setInputAction(({ endPosition }: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
-      const cartesian = viewer.camera.pickEllipsoid(endPosition)
-
-      if (cartesian) {
-        const cartographic = Cesium.Cartographic.fromCartesian(cartesian)
-
-        point.value.lon = Cesium.Math.toDegrees(cartographic.longitude)
-        point.value.lat = Cesium.Math.toDegrees(cartographic.latitude)
-        point.value.alt = cartographic.height
-      }
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+export const useMap = (viewer: Cesium.Viewer) => {
+  if (!_handler) {
+    _handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas) // 事件
   }
 
-  // 左单击事件
-  // const drawPoint = (viewer: Cesium.Viewer, callback: Function) => {
-  //   handler?.destroy()
-  //   handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+  const cartesian = ref<Cesium.Cartesian3>() // 笛卡尔坐标
+  const geographic = ref<Type.Geographic>({ lon: 0, lat: 0, alt: 0 })
+  const drawType = ref<Type.DrawType>() // 绘制类型
+  const camera = ref<{ heading?: number; pitch?: number; roll?: number }>({}) // 相机参数
 
-  //   handler?.setInputAction((event: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
-  //     callback(event)
-  //   }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
-  // }
+  const _drawConfig = ref<Record<string, any>>({}) // 绘制配置
+  const _dataSource: Cesium.CustomDataSource = new Cesium.CustomDataSource('_dataSource') // 资源集合
+  let _mousePos: Cesium.Cartesian3 | undefined // 移动点
+  let _tempPositions: Cesium.Cartesian3[] = [] // 存储点集合
 
-  // 画点
-  const drawPoint = (config?: Cesium.Entity.ConstructorOptions) => {
-    if (!window.viewer) return
-    drawPointHandler?.destroy()
-    drawPointHandler = new Cesium.ScreenSpaceEventHandler(window.viewer.scene.canvas)
+  const point = new Point(_dataSource.entities)
 
-    drawPointHandler.setInputAction(
-      ({ position }: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-        const ray = window.viewer.camera.getPickRay(position)
-        const pos = window.viewer.scene.globe.pick(ray!, window.viewer.scene)
-        window.viewer.entities.add({
-          id: Math.random().toString(36).substring(2),
-          position: pos,
-          point: Object.assign(
-            {
-              color: Cesium.Color.RED,
-              pixelSize: 10,
-              outlineWidth: 2,
-              outlineColor: Cesium.Color.WHITE
-              // heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-              // disableDepthTestDistance: 99000000
-              // heightReference: Cesium.HeightReference.NONE
-            },
-            config || {}
-          )
-        })
-      },
-      Cesium.ScreenSpaceEventType.LEFT_CLICK
-    )
-  }
+  viewer.dataSources.add(_dataSource)
 
-  onUnmounted(() => {
-    // globalHandler?.destroy()
-    // drawPointHandler?.destroy()
+  // 相机变化事件
+  viewer.camera.changed.addEventListener(() => {
+    camera.value = {
+      heading: Cesium.Math.toDegrees(viewer.camera.heading),
+      pitch: Cesium.Math.toDegrees(viewer.camera.pitch),
+      roll: Cesium.Math.toDegrees(viewer.camera.roll)
+    }
   })
 
-  return { point, camera, addEvent, drawPoint }
+  // 鼠标移动事件
+  _handler?.setInputAction(({ endPosition }: Cesium.ScreenSpaceEventHandler.MotionEvent) => {
+    geographic.value = screenToGeographic(viewer, endPosition)
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+
+  // 鼠标左键点击事件
+  _handler?.setInputAction(({ position }: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
+    // console.log((geographic.value = screenToGeographic(viewer, position)))
+    const pos = viewer.scene.pickPosition(position)
+
+    switch (drawType.value) {
+      case 'point':
+        pos && point.draw(pos, _drawConfig.value)
+        break
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+
+  // 激活绘制目标
+  const activated = (target: Type.DrawType, config?: any) => {
+    drawType.value = drawType.value === target ? undefined : target
+    _drawConfig.value = config || {}
+  }
+
+  // 清除
+  const clear = () => {
+    _dataSource?.entities.removeAll()
+    _mousePos = undefined
+    _tempPositions = []
+  }
+
+  onBeforeUnmount(() => {
+    clear()
+    _dataSource && window.viewer?.dataSources?.remove(_dataSource)
+    // _handler?.destroy()
+  })
+
+  return {
+    camera,
+    drawType,
+    cartesian,
+    geographic,
+    activated,
+    clear
+  }
 }

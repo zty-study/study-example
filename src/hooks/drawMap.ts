@@ -102,7 +102,7 @@ export const drawMap = (viewer: Cesium.Viewer) => {
     }
 
     // 节点point
-    if (!position && _tempPositions.length >= 2) {
+    if (!position && _tempPositions.length >= 1) {
       _dataSource?.entities.add({
         position: _tempPositions[_tempPositions.length - 1],
         point: {
@@ -215,9 +215,11 @@ export const drawMap = (viewer: Cesium.Viewer) => {
   const handleDraw = () => {
     // 左键单击事件处理
     _drawHandler.setInputAction(({ position }: Cesium.ScreenSpaceEventHandler.PositionedEvent) => {
-      let pos: Cesium.Cartesian3 | undefined
-      const ray = viewer.camera.getPickRay(position)
-      ray && (pos = viewer.scene.globe.pick(ray, viewer.scene))
+      console.log('position', position)
+      // let pos: Cesium.Cartesian3 | undefined
+      // const ray = viewer.camera.getPickRay(position)
+      // ray && (pos = viewer.scene.globe.pick(ray, viewer.scene))
+      const pos = viewer.scene.pickPosition(position)
       switch (drawType.value) {
         case 'point':
           pos && _drawPoint(pos)
@@ -231,6 +233,7 @@ export const drawMap = (viewer: Cesium.Viewer) => {
           _tempPositions?.length > 0 && drawDistance()
           break
         case 'sector':
+          console.log(pos)
           pos && drawSector(pos, viewer.camera.position.z / 10, 20, 110)
           break
       }

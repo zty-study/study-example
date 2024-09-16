@@ -1,6 +1,7 @@
 import * as Cesium from 'cesium'
 
-export default class Point extends Cesium.Entity {
+// export default class Polyline extends Cesium.Entity {
+export default class Polyline extends Cesium.Entity {
   entities: Cesium.EntityCollection
   list: Cesium.Entity[]
 

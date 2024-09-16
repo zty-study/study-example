@@ -27,7 +27,7 @@ export const initMap = () => {
       fullscreenButton: false,
       selectionIndicator: false, // 取消绿色选框
       vrButton: false,
-      sceneMode: Cesium.SceneMode.SCENE2D
+      sceneMode: Cesium.SceneMode.SCENE3D
     })
 
     // 如果为真，则允许用户旋转相机。如果为假，相机将锁定到当前标题。此标志仅适用于2D和3D。
@@ -37,7 +37,7 @@ export const initMap = () => {
     // // 如果为真，允许用户放大和缩小。如果为假，相机将锁定到距离椭圆体的当前距离
     // scene.screenSpaceCameraController.enableZoom = false;
     // // 如果为真，则允许用户倾斜相机。如果为假，相机将锁定到当前标题。这个标志只适用于3D和哥伦布视图。
-    // viewer.scene.screenSpaceCameraController.enableTilt = false
+    viewer.scene.screenSpaceCameraController.enableTilt = false
 
     // 抗锯齿
     viewer.scene.postProcessStages.fxaa.enabled = false
@@ -110,7 +110,6 @@ export const initMap = () => {
     //     tileMatrixSetID: 'GoogleMapsCompatible'
     //   })
     // )
-
     // 影像注记
     // viewer.imageryLayers.addImageryProvider(
     //   new Cesium.WebMapTileServiceImageryProvider({
@@ -131,19 +130,19 @@ export const initMap = () => {
       Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     )
 
-    Cesium.createWorldTerrainAsync({
-      requestVertexNormals: true,
-      requestWaterMask: true
-    }).then((terrainProvider) => {
-      viewer.terrainProvider = terrainProvider
-    })
+    // Cesium.createWorldTerrainAsync({
+    //   requestVertexNormals: true,
+    //   requestWaterMask: true
+    // }).then((terrainProvider) => {
+    //   viewer.terrainProvider = terrainProvider
+    // })
 
     // 开启地形检测
-    // viewer.scene.globe.depthTestAgainstTerrain = true
+    viewer.scene.globe.depthTestAgainstTerrain = false
 
     // 设置地图缩放高度范围
-    // viewer.scene.screenSpaceCameraController.maximumZoomDistance = 10000000
-    // viewer.scene.screenSpaceCameraController.minimumZoomDistance = 200
+    viewer.scene.screenSpaceCameraController.maximumZoomDistance = 8000000
+    viewer.scene.screenSpaceCameraController.minimumZoomDistance = 200
 
     window.viewer = viewer
     return viewer

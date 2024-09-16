@@ -26,25 +26,23 @@
 </template>
 
 <script setup lang="ts">
-const { drawType, activated, handleDraw, clear } = drawMap(window.viewer)
+import {Color} from 'cesium'
 
-const toolList = [
+const { activated, clear, drawType } = useMap(window.viewer)
+
+const toolList: Record<string, any>[] = [
   {
     name: '画点',
     value: 'point',
     icon: 'checkbox-blank-circle-fill',
     size: 10,
-    config: { color: '#2997f7' }
+    config: { color: Color.fromCssColorString("#2997f7") }
   },
   { name: '画线', value: 'line', icon: 'pencil-line' },
   { name: '广告牌', value: 'billboard', icon: 'map-pin-fill' },
   { name: '测距', value: 'distance', icon: 'ruler-fill' },
   { name: '扇形', value: 'sector', icon: 'gradienter-line' }
 ]
-
-onMounted(() => {
-  handleDraw()
-})
 </script>
 
 <style lang="scss" scoped>

@@ -1,9 +1,9 @@
 <template>
   <div class="map-base-info px-10 py-5 fs-12">
     <div class="flex-yc flex-sb">
-      <div class="flex-yc flex-1">经度：{{ point.lon }}</div>
-      <div class="flex-yc flex-1">纬度：{{ point.lat }}</div>
-      <div class="flex-yc flex-1">高度：{{ 0 }}</div>
+      <div class="flex-yc flex-1">经度：{{ geographic?.lon }}</div>
+      <div class="flex-yc flex-1">纬度：{{ geographic?.lat }}</div>
+      <div class="flex-yc flex-1">高度：{{ geographic?.alt }}</div>
     </div>
     <div class="flex-yc flex-sb mt-5">
       <div class="flex-yc flex-1">heading：{{ camera.heading }}</div>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-const { point, camera } = useMap()
+const { geographic, camera } = useMap(window.viewer)
 </script>
 
 <style lang="scss" scoped>
