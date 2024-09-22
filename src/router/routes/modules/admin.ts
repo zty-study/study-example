@@ -3,6 +3,7 @@ import AdminLayout from '@/layouts/admin/index.vue'
 import { SYSTEM_ROUTES } from '../app/system'
 import { HTML_ROUTES } from '../app/html'
 import { CESIUM_ROUTES } from '../app/cesium'
+import { COMPONENT_ROUTES } from '../app/component'
 
 const ADMIN_ROUTES: RouteRecordRaw[] = [
   {
@@ -19,7 +20,8 @@ const ADMIN_ROUTES: RouteRecordRaw[] = [
       },
       ...HTML_ROUTES,
       ...CESIUM_ROUTES,
-      ...SYSTEM_ROUTES,
+      ...COMPONENT_ROUTES,
+      ...SYSTEM_ROUTES
     ]
   }
 ]
