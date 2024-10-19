@@ -1,0 +1,55 @@
+{
+  "name": "vue3-cesium-use",
+  "version": "0.0.10",
+  "private": false,
+  "type": "module",
+  "description": "CesiumJS development tool library based on Vue3",
+  "author": {
+    "name": "ztyangt",
+    "email": "ztyangt@gmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/ztyangt/vue3-cesium-use",
+  "bugs": "https://github.com/ztyangt/vue3-cesium-use/issues",
+  "keywords": [
+    "cesium",
+    "vue3",
+    "use",
+    "hooks",
+    "tools"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/es/index.mjs",
+      "require": "./dist/lib/index.cjs"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/lib/index.js",
+  "module": "dist/es/index.mjs",
+  "types": "dist/dist/@types/packages/index.d.ts",
+  "scripts": {
+    "build": "run-p type-check \"build-only {@}\" --",
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit --allowImportingTsExtensions && tsc --noEmit",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "cesium": "^1.121.1",
+    "vue": "^3.5.6",
+    "@vueuse/core": "^11.1.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.24.2"
+  }
+}

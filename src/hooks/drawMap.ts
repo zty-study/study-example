@@ -219,6 +219,7 @@ export const drawMap = (viewer: Cesium.Viewer) => {
       // let pos: Cesium.Cartesian3 | undefined
       // const ray = viewer.camera.getPickRay(position)
       // ray && (pos = viewer.scene.globe.pick(ray, viewer.scene))
+
       const pos = viewer.scene.pickPosition(position)
       switch (drawType.value) {
         case 'point':

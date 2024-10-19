@@ -42,11 +42,25 @@ export const useMap = (viewer: Cesium.Viewer) => {
     // console.log((geographic.value = screenToGeographic(viewer, position)))
     const pos = viewer.scene.pickPosition(position)
 
-    switch (drawType.value) {
-      case 'point':
-        pos && point.draw(pos, _drawConfig.value)
-        break
+    const pointPrimitiveCollection = new Cesium.PointPrimitiveCollection()
+    for (let i = 0; i < 200000; i++) {
+      const opts = {
+        position: Cesium.Cartesian3.fromDegrees(
+          116.39 + Math.random() * 50,
+          39.9 + Math.random() * 50
+        ),
+        color: Cesium.Color.GREEN,
+        pixelSize: 10
+      }
+      pointPrimitiveCollection.add(opts)
     }
+    viewer.scene.primitives.add(pointPrimitiveCollection)
+
+    // switch (drawType.value) {
+    //   case 'point':
+    //     pos && point.draw(pos, _drawConfig.value)
+    //     break
+    // }
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
   // 激活绘制目标
